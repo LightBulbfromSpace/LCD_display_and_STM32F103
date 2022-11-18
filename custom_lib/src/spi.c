@@ -37,7 +37,7 @@ void SPI_Config()
 	// MOSI - MODE[10] (alternate function, push-pull), CNF[11] (max speed 50 MHz)
 	GPIOA->CRL = GPIOA->CRL & ~(GPIO_CRL_CNF7 | GPIO_CRL_MODE7) | GPIO_CRL_CNF7_1 | GPIO_CRL_MODE7;
 	
-	// Bits enabled: SPE (6), BR (5:3), MSTR (2)
+	// Bits enabled: SSM(9), SSI(8), SPE (6), BR (5:3), MSTR (2)
 	SPI1->CR1 = 0x0354;						// 0b0000001101010100
 
 	GPIOA->ODR |= GPIO_ODR_ODR2;			// Turn off RESET
