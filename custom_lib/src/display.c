@@ -58,10 +58,10 @@ void dspl_NOP()
     cmd(0xE3);
 }
 
-uint8_t display_buff_init(uint8_t size)
+
+// 
+void display_buff_init(uint8_t buff[], uint16_t size)
 {
-    uint8_t LCD_Buff[size];
 	for (uint8_t i = 0; i < size; i++)
-		LCD_Buff[i] = 0;
-    return LCD_Buff;
+		buff[i] = 0;
 }

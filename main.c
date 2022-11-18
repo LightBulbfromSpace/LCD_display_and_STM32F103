@@ -14,7 +14,8 @@ int __attribute((noreturn)) main(void) {
 	
 	display_clear();
 
-	//uint8_t LCD_Buff[] = display_buff_init(1024);
+	uint8_t LCD_Buff[1024];
+	display_buff_init(LCD_Buff, 1024);
 
 	while (1)
 	{
