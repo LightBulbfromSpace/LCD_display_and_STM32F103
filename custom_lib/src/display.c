@@ -40,7 +40,7 @@ void set_column(uint8_t col_addr)
 	cmd(0x10 | (col_addr >> 4));
 }
 
-void clear()
+void display_clear()
 {
     for (uint8_t i = 0; i < 8; i++)
     {
@@ -56,4 +56,12 @@ void clear()
 void dspl_NOP()
 {
     cmd(0xE3);
+}
+
+uint8_t display_buff_init(uint8_t size)
+{
+    uint8_t LCD_Buff[size];
+	for (uint8_t i = 0; i < size; i++)
+		LCD_Buff[i] = 0;
+    return LCD_Buff;
 }

@@ -56,6 +56,7 @@ set(SOURCE_FILES
     custom_lib/src/utils.c
     custom_lib/src/spi.c
     custom_lib/src/display.c
+    custom_lib/src/examples.c
     main.c)
 
 
