@@ -9,5 +9,4 @@ build/
 *.map
 CMakeCache.txt
 [M,m]akefile
-
-
+cmake_install.cmake
