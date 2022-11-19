@@ -10,13 +10,13 @@ void running_line()
 		{
 			set_page(j);
 			set_column(0x00);
-			for (uint8_t i = 0; i < 128; i++)
+			for (uint8_t i = 0; i < 132; i++)
 			{
 				data(0xFF);
 				delay_us(10000);
 			}
 			set_column(0x00);
-			for (uint8_t i = 0; i < 128; i++)
+			for (uint8_t i = 0; i < 132; i++)
 			{
 				data(0x00);
 				delay_us(10000);
