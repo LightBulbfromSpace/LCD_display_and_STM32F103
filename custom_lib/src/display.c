@@ -39,6 +39,11 @@ void set_column(uint8_t col_addr)
 	cmd(0x10 | (col_addr >> 4));
 }
 
+void set_start_line(uint8_t line)
+{
+	cmd(0x40 | line & 0x3F);
+}
+
 void display_clear()
 {
 	CS_LOW
@@ -62,7 +67,7 @@ void display_clear()
 	CS_HIGH
 }
 
-void dspl_NOP()
+void display_NOP()
 {
     cmd(0xE3);
 }
@@ -98,17 +103,14 @@ void repaint(uint8_t LCD_Buff[])
 	{
 		RS_CMD
 		SPI_write(0xB0 | i & 0x07);		// Set page
-		SPI_write(0x00);				// Set column
+		SPI_write(0x04);				// Set column
 		SPI_write(0x10);				//
 		while (SPI1->SR & SPI_SR_BSY);
-		for (uint8_t j = 0; j < 132; j++)
+		for (uint8_t j = 0; j < 128; j++)
 		{
-			// SPI_write(j & 0x0F);				// Set column
-			// SPI_write(0x10 | (j >> 4) & 0x07);	//
-			// while (SPI1->SR & SPI_SR_BSY);
 
 			RS_DATA
-			SPI_write(LCD_Buff[(i + 1)*j]);
+			SPI_write(LCD_Buff[j]);
 			while (SPI1->SR & SPI_SR_BSY);
 		}
 	}

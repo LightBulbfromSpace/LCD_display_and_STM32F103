@@ -47,6 +47,7 @@ add_definitions(-DSTM32F10X_MD)
 include_directories(cmsis)
 include_directories(stm32)
 include_directories(custom_lib/headers)
+include_directories(custom_lib/headers/examples)
 add_subdirectory(custom_lib)
 
 set(SOURCE_FILES
@@ -56,7 +57,7 @@ set(SOURCE_FILES
     custom_lib/src/utils.c
     custom_lib/src/spi.c
     custom_lib/src/display.c
-    custom_lib/src/examples.c
+    custom_lib/src/examples/running_line.c
     main.c)
 
 

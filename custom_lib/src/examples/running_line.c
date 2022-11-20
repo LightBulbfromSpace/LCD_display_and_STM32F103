@@ -1,8 +1,8 @@
 #include <stm32f10x.h>
-#include <examples.h>
 #include <utils.h>
 #include <spi.h>
 #include <display.h>
+#include <running_line.h>
 
 void running_line()
 {
