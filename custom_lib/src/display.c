@@ -48,7 +48,7 @@ void display_clear()
 
 		SPI_write(0xB0 | i & 0x07);		// Set page
 
-		SPI_write(0x00);				// Set column
+		SPI_write(0x00);				// Set column 0x00
 		SPI_write(0x10);				//
 		while (SPI1->SR & SPI_SR_BSY);
 
@@ -56,6 +56,7 @@ void display_clear()
         {
 			RS_DATA
 			SPI_write(0x00);
+			while (SPI1->SR & SPI_SR_BSY);
         }
     }
 	CS_HIGH
@@ -70,7 +71,7 @@ void dspl_NOP()
 void display_buff_init(uint8_t buff[], uint16_t size)
 {
 	for (uint8_t i = 0; i < size; i++)
-		buff[i] = 0;
+		buff[i] = 0x00;
 }
 
 // x in range [1:64], y in range [1:128]
@@ -92,11 +93,24 @@ void set_pixel(uint8_t x, uint8_t y, uint8_t LCD_Buff[])
 
 void repaint(uint8_t LCD_Buff[])
 {
-	set_page(0x01); //(uint8_t)((i >> 7) & 0x07)
-		set_column(0x01); //(uint8_t)(i & 0x7F)
-		data(0xA3);
-	for (uint16_t i = 0; i < 1024; i++)
+	CS_LOW
+	for (uint8_t i = 0; i < 8; i++)
 	{
-		
+		RS_CMD
+		SPI_write(0xB0 | i & 0x07);		// Set page
+		SPI_write(0x00);				// Set column
+		SPI_write(0x10);				//
+		while (SPI1->SR & SPI_SR_BSY);
+		for (uint8_t j = 0; j < 132; j++)
+		{
+			// SPI_write(j & 0x0F);				// Set column
+			// SPI_write(0x10 | (j >> 4) & 0x07);	//
+			// while (SPI1->SR & SPI_SR_BSY);
+
+			RS_DATA
+			SPI_write(LCD_Buff[(i + 1)*j]);
+			while (SPI1->SR & SPI_SR_BSY);
+		}
 	}
+	CS_HIGH
 }
