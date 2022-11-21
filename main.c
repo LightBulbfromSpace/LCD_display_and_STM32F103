@@ -20,26 +20,29 @@ int __attribute((noreturn)) main(void) {
 	// repaint(LCD_Buff);
 	
 	uint8_t ball[] = {0x00, 0x18, 0x76, 0x62, 0xF3, 0xFF, 0x7E, 0x7E, 0x18, 0x00};
+	base_point bp = {10, 10, 1, 1};
 
 	while (1)
 	{
-		set_column(56);
-		for (uint8_t i = 0; i < 12; i++)
-		{
-			data(0x00);
-		}
+		// set_column(56);
+		// for (uint8_t i = 0; i < 12; i++)
+		// {
+		// 	data(0x00);
+		// }
 			
-		for (uint8_t i = 0; i < 56; i++)
-		{
-			draw_ball(ball, i, i);
-			delay_us(50000);
-		}
+		// for (uint8_t i = 0; i < 56; i++)
+		// {
+		// 	draw_ball(ball, i, i);
+		// 	delay_us(50000);
+		// }
 
-		for (uint8_t i = 0; i < 56; i++)
-		{
-			draw_ball(ball, 55-i, 55-i);
-			delay_us(50000);
-		}
+		// for (uint8_t i = 0; i < 56; i++)
+		// {
+		// 	draw_ball(ball, 55-i, 55-i);
+		// 	delay_us(50000);
+		// }
+		//__NOP();
+		move_ball(&bp, ball);
 		
 	}
 
