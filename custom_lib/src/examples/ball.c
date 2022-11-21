@@ -24,33 +24,57 @@ void move_ball(base_point* p, uint8_t ball[])
     uint8_t page = (p->y >> 3) & 0x07;
     uint8_t pos_in_col = p->y & 0x07;
 
-    set_column(p->x);
-    set_page(page);
+    CS_LOW
+    RS_CMD
 
+    SPI1->DR = p->x & 0x0F;         // Set column
+    SPI_write(0x10 | (p->x >> 4));  //
+
+    SPI_write(0xB0 | page);         // Set page
+
+    while (SPI1->SR & SPI_SR_BSY);
+
+    RS_DATA
     for (uint8_t i = 0; i < 10; i++)
     {
-        data((ball[i] << pos_in_col) & 0xFF);
+        SPI_write((ball[i] << pos_in_col) & 0xFF); // Send data
     }
+    while (SPI1->SR & SPI_SR_BSY);
     
-    set_column(p->x);
+    RS_CMD
+    SPI1->DR = p->x & 0x0F;         // Set column
+    SPI_write(0x10 | (p->x >> 4));  //
 
 
     if (pos_in_col > 0)
     {
-        set_page(page + 1);
+        SPI_write(0xB0 | page + 1);
+        while (SPI1->SR & SPI_SR_BSY);
+
+        RS_DATA
         for (uint8_t i = 0; i < 10; i++)
         {
-            data(ball[i] >> (8 - pos_in_col));
+            SPI_write(ball[i] >> (8 - pos_in_col));
         }
     }
     else
     {
-        set_page(page + (-1)*p->dy);
-        set_column(p->x + 3);
+        if (page > 0)
+        {
+        SPI_write(0xB0 | page + (-1)*p->dy);    // Set page
+
+        SPI_write((p->x + 3) & 0x0F);           // Set column
+        SPI_write(0x10 | ((p->x + 3) >> 4));    //
+        while (SPI1->SR & SPI_SR_BSY);
+
+        RS_DATA
         for (uint8_t i = 0; i < 4; i++)
-            data(0x00);
+            SPI_write(0x00);
+        }
+
     }
-    
+    while (SPI1->SR & SPI_SR_BSY);
+    CS_HIGH
 
     p->x += p->dx;
     p->y += p->dy;
@@ -64,5 +88,6 @@ void move_ball(base_point* p, uint8_t ball[])
     {
         p->dx = -p->dx;
     }
+
     delay_us(100000);
 }
