@@ -19,7 +19,8 @@ int __attribute((noreturn)) main(void) {
 	// LCD_Buff[5] = 0xFE;
 	// repaint(LCD_Buff);
 	
-	uint8_t ball[] = {0x00, 0x18, 0x76, 0x62, 0xF3, 0xFF, 0x7E, 0x7E, 0x18, 0x00};
+	extern uint8_t ball[10];
+
 	base_point bp = {10, 10, 1, 1};
 
 	while (1)

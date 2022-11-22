@@ -4,6 +4,8 @@
 #include <display.h>
 #include <spi.h>
 
+uint8_t ball[] = {0x00, 0x18, 0x76, 0x62, 0xF3, 0xFF, 0x7E, 0x7E, 0x18, 0x00};
+
 // invisible colums are considered
 void draw_ball(uint8_t ball[], uint8_t line, uint8_t col)
 {
