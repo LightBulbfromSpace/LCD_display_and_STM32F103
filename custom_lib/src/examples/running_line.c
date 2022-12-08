@@ -6,20 +6,20 @@
 
 void running_line()
 {
-    		for (uint8_t j = 0; j < 8; j++)
+	for (uint8_t j = 0; j < 8; j++)
+	{
+		set_page(j);
+		set_column(0x00);
+		for (uint8_t i = 0; i < 132; i++)
 		{
-			set_page(j);
-			set_column(0x00);
-			for (uint8_t i = 0; i < 132; i++)
-			{
-				data(0xFF);
-				delay_us(10000);
-			}
-			set_column(0x00);
-			for (uint8_t i = 0; i < 132; i++)
-			{
-				data(0x00);
-				delay_us(10000);
-			}
+			data(0xFF);
+			delay_us(10000);
 		}
+		set_column(0x00);
+		for (uint8_t i = 0; i < 132; i++)
+		{
+			data(0x00);
+			delay_us(10000);
+		}
+	}
 }

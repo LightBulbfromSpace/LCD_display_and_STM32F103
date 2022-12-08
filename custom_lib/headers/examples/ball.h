@@ -11,8 +11,14 @@ typedef struct
     int8_t dy;
 } base_point;
 
+typedef struct
+{
+    base_point bp;
+    uint8_t texture[10];
+} Ball_T;
 
-void draw_ball(uint8_t ball[], uint8_t line, uint8_t col);
-void move_ball(base_point* p, uint8_t ball[]);
+
+void move_ball(Ball_T* ball);
+void draw_ball(uint8_t texture_ball[], uint8_t line, uint8_t col);
 
 #endif /* __BALLH */

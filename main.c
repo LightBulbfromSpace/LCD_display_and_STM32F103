@@ -5,6 +5,8 @@
 #include <display.h>
 #include <stdbool.h>
 #include <ball.h>
+#include <string.h>
+#include <running_line.h>
 
 
 int __attribute((noreturn)) main(void) {
@@ -18,34 +20,17 @@ int __attribute((noreturn)) main(void) {
 	// display_buff_init(LCD_Buff, 128);
 	// LCD_Buff[5] = 0xFE;
 	// repaint(LCD_Buff);
-	
-	extern uint8_t ball[10];
 
-	base_point bp = {10, 10, 1, 1};
+	Ball_T ball;
+	base_point base = {10, 10, 1, 1};
+	create_ball(&ball, base);
+	
+	set_start_line(0);
 
 	while (1)
 	{
-		// set_column(56);
-		// for (uint8_t i = 0; i < 12; i++)
-		// {
-		// 	data(0x00);
-		// }
-			
-		// for (uint8_t i = 0; i < 56; i++)
-		// {
-		// 	draw_ball(ball, i, i);
-		// 	delay_us(50000);
-		// }
-
-		// for (uint8_t i = 0; i < 56; i++)
-		// {
-		// 	draw_ball(ball, 55-i, 55-i);
-		// 	delay_us(50000);
-		// }
-		//__NOP();
-		move_ball(&bp, ball);
-		
+		move_ball(&ball);
+		//running_line();
+		//draw_ball(texture_ball, 0, 0);
 	}
-
-
 }
