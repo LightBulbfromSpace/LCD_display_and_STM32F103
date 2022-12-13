@@ -22,15 +22,12 @@ int __attribute((noreturn)) main(void) {
 	// repaint(LCD_Buff);
 
 	Ball_T ball;
-	base_point base = {10, 10, 1, 1};
+	base_point base = {10, 15, 1, 1};
 	create_ball(&ball, base);
-	
 	set_start_line(0);
-
 	while (1)
 	{
 		move_ball(&ball);
-		//running_line();
-		//draw_ball(texture_ball, 0, 0);
+		//delay_us(100000);
 	}
 }
