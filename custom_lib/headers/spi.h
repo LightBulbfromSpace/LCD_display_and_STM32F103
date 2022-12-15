@@ -16,5 +16,6 @@
 
 void SPI_Config();
 void SPI_write(uint8_t bits);
+uint16_t SPI_read();
 void cmd(uint8_t bits);
 void data(uint8_t bits);

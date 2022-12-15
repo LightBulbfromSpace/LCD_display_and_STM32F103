@@ -7,6 +7,7 @@
 #include <ball.h>
 #include <string.h>
 #include <running_line.h>
+#include <racket.h>
 
 
 int __attribute((noreturn)) main(void) {
@@ -22,12 +23,13 @@ int __attribute((noreturn)) main(void) {
 	// repaint(LCD_Buff);
 
 	Ball_T ball;
-	base_point base = {10, 15, 1, 1};
+	Racket_T racket;
+	base_point base = {10, 15, 5, 5};
+	base_point base2 = {10, 10, 1, 1};
+	create_racket(&racket, base2, 10, 5);
 	create_ball(&ball, base);
-	set_start_line(0);
-	while (1)
-	{
+	draw_racket(racket);
+	while (1) {
 		move_ball(&ball);
-		//delay_us(100000);
 	}
 }

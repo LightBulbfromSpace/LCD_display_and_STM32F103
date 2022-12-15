@@ -58,6 +58,8 @@ set(SOURCE_FILES
     custom_lib/src/spi.c
     custom_lib/src/display.c
     custom_lib/src/examples/running_line.c
+    custom_lib/src/examples/racket.c
+    custom_lib/src/examples/common.c
     main.c)
 
 

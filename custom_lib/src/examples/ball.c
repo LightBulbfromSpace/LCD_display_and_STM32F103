@@ -5,7 +5,7 @@
 #include <spi.h>
 #include <string.h>
 
-const uint8_t texture_ball[] = {0x00, 0x18, 0x76, 0x62, 0xF3, 0xFF, 0x7E, 0x7E, 0x18, 0x00};
+const uint8_t texture_ball[] = { 0x18, 0x76, 0x62, 0xF3, 0xFF, 0x7E, 0x7E, 0x18};
 
 void create_ball(Ball_T *ball, base_point bp) {
     ball->bp = bp;
@@ -15,89 +15,75 @@ void create_ball(Ball_T *ball, base_point bp) {
 // invisible colums are considered
 void draw_ball(Ball_T* ball)
 {
+    CS_LOW();
     uint8_t page = (ball->bp.y >> 3) & 0x07;
+    uint8_t top_page_offset = ball->bp.y & 0x07;
     set_column(ball->bp.x);
     set_page(page);
-    int top_page_offset = ball->bp.y & 0x07;
+
     //first page
-    for (uint8_t i = 0; i < sizeof(ball->texture)/sizeof(uint8_t); i++)
+    for (uint8_t i = 0; i < 8; i++)
     {
         data((ball->texture[i] << top_page_offset ) & 0xFF); // Send data
     }
     set_column(ball->bp.x);
-    // second page
-    if (ball->bp.y > 0)
-    {
-        if (top_page_offset > 0)
-        {
-            set_page(page + 1);
-            for (uint8_t i = 0; i < sizeof(ball->texture)/sizeof(uint8_t); i++)
-            {
-                data(ball->texture[i] >> (8 - top_page_offset));
-            }
-        }
-        else
-        {
-            if (page > 0)
-            {
-            set_page(page + (-1)*ball->bp.dy);
-            set_column(ball->bp.x + 3);
-            for (uint8_t i = 0; i < 4; i++)
-                data(0x00);
-            }
 
+    // second page
+    if (top_page_offset > 0)
+    {
+        set_page(page + 1);
+        for (uint8_t i = 0; i < 8; i++)
+        {
+            data(ball->texture[i] >> (8 - top_page_offset));
         }
     }
+    CS_HIGH();
+}
+
+void clear_area(Ball_T* ball)
+{
+    CS_LOW();
+    uint8_t page = (ball->bp.y >> 3) & 0x07;
+    uint8_t top_page_offset = ball->bp.y & 0x07;
+    set_column(ball->bp.x);
+    set_page(page);
+
+    //first page
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        data(0x00); // Send data
+    }
+    set_column(ball->bp.x);
+
+    // second page
+    if (top_page_offset > 0)
+    {
+        set_page(page + 1);
+        for (uint8_t i = 0; i < 8; i++)
+        {
+            data(0x00);
+        }
+    }
+    CS_HIGH();
 }
 
 void move_ball(Ball_T* ball)
 {
-    /*set_start_line(0x00);
-    uint8_t page = (ball->bp.y >> 3) & 0x07;
-
-    set_column(ball->bp.x);
-
-    set_page(page);
-    for (uint8_t i = 0; i < sizeof(ball->texture)/sizeof(uint8_t); i++)
-    {
-        data((ball->texture[i] << ball->bp.y) & 0xFF); // Send data
-    }
-    set_column(ball->bp.x);
-
-
-    if (ball->bp.y > 0)
-    {
-        set_page(page + 1);
-        for (uint8_t i = 0; i < sizeof(ball->texture)/sizeof(uint8_t); i++)
-        {
-            data(ball->texture[i] >> (8 - ball->bp.y));
-        }
-    }
-    else
-    {
-        if (page > 0)
-        {
-        set_page(page + (-1)*ball->bp.dy);
-        set_column(ball->bp.x + 3);
-        for (uint8_t i = 0; i < 4; i++)
-            data(0x00);
-        }
-
-    }*/
-    draw_ball(ball);
-
+    delay_us(150000);
+    clear_area(ball);
+    
     ball->bp.x += ball->bp.dx;
     ball->bp.y += ball->bp.dy;
 
-    if (ball->bp.y > 55 || ball->bp.y < 1)
+    if (ball->bp.y > 50 || ball->bp.y < 1)
     {
         ball->bp.dy = -ball->bp.dy;
     }
     
-    if (ball->bp.x < 4 || ball->bp.x > 122)
+    if (ball->bp.x < 4 || ball->bp.x > 116)
     {
         ball->bp.dx = -ball->bp.dx;
     }
 
-    delay_us(2000000);
+    draw_ball(ball);
 }

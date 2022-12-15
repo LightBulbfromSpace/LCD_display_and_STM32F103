@@ -2,14 +2,8 @@
 #define __BALLH
 
 #include <stm32f10x.h>
+#include <common.h>
 
-typedef struct
-{
-    uint8_t x;
-    uint8_t y;
-    int8_t dx;
-    int8_t dy;
-} base_point;
 
 typedef struct
 {

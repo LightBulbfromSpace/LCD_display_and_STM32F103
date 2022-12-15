@@ -1,15 +1,6 @@
 #include <stm32f10x.h>
 #include <spi.h>
 
-#define CS_LINE_NO (4)
-
-void SPI_select() {
-	GPIOA->BSRR = (1 << CS_LINE_NO) << 16U; // reset bit
-}
-
-void SPI_deselect() {
-	GPIOA->BSRR = (1 << CS_LINE_NO); //set bit
-}
 
 void SPI_Config()
 {
@@ -28,7 +19,8 @@ void SPI_Config()
 	/** Config **/
 
 	RCC->APB2ENR = RCC_APB2ENR_IOPAEN | RCC_APB2ENR_SPI1EN;	// Clocking enable
-	AFIO->MAPR &= ~AFIO_MAPR_SPI1_REMAP;	// Set SPI1_REMAP = 0
+	RCC->APB2RSTR |= RCC_APB2RSTR_SPI1RST;
+	RCC->APB2RSTR &= ~RCC_APB2RSTR_SPI1RST;
 
 	// RESET - MODE[00] (general function, push-pull), CNF[11] (max speed 50 MHz)
 	GPIOA->CRL = GPIOA->CRL & ~(GPIO_CRL_CNF2 | GPIO_CRL_MODE2) | GPIO_CRL_MODE2;
@@ -37,20 +29,29 @@ void SPI_Config()
 	GPIOA->CRL = GPIOA->CRL & ~(GPIO_CRL_CNF3 | GPIO_CRL_MODE3) | GPIO_CRL_MODE3;
 
 	// CS - MODE[10] (alternate function, push-pull), CNF[11] (max speed 50 MHz) 
-	GPIOA->CRL = GPIOA->CRL & ~(GPIO_CRL_CNF4 | GPIO_CRL_MODE4) | GPIO_CRL_CNF4_1 | GPIO_CRL_MODE4; // NSS
+	GPIOA->CRL = GPIOA->CRL & ~(GPIO_CRL_CNF4 | GPIO_CRL_MODE4)| GPIO_CRL_MODE4; // NSS ???
 
 	// SCK - MODE[10] (alternate function, push-pull), CNF[11] (max speed 50 MHz)
 	GPIOA->CRL = GPIOA->CRL & ~(GPIO_CRL_CNF5 | GPIO_CRL_MODE5) | GPIO_CRL_CNF5_1 | GPIO_CRL_MODE5;
 
+	// initialize MISO (input, floating) 
+	GPIOA->CRL = GPIOA->CRL & ~(GPIO_CRL_CNF6 | GPIO_CRL_MODE6) | GPIO_CRL_CNF6_0; //input floating
+
 	// MOSI - MODE[10] (alternate function, push-pull), CNF[11] (max speed 50 MHz)
 	GPIOA->CRL = GPIOA->CRL & ~(GPIO_CRL_CNF7 | GPIO_CRL_MODE7) | GPIO_CRL_CNF7_1 | GPIO_CRL_MODE7;
 
-	SPI_deselect();
+	CS_HIGH();
 
 	// Bits enabled: SSM(9), SSI(8), SPE (6), BR (5:3), MSTR (2)
-	SPI1->CR1 = 0x0354;						// 0b0000001101010100
+	//SPI1->CR1 = 0x0354;						// 0b0000001101010100
+	SPI1->CR2 = 0;
+	SPI1->CR1 = SPI_CR1_BR_0| // SPI_CR1_BR_2| // SPI_CR1_BR_0|SPI_CR1_BR_1|SPI_CR1_BR_2|
+		SPI_CR1_SSM |
+		SPI_CR1_SSI | SPI_CR1_MSTR;
+	SPI1->CR1 |= SPI_CR1_CPOL|SPI_CR1_CPHA;
 
 	GPIOA->ODR |= GPIO_ODR_ODR2;			// Turn off RESET
+	SPI1->CR1 |= SPI_CR1_SPE; // Enable SPI !!!
 }
 
 // void SPI_Config() {
@@ -80,6 +81,12 @@ void SPI_Config()
 // 	SPI1->CR1 |= SPI_CR1_CPOL|SPI_CR1_CPHA;
 // }
 
+uint16_t SPI_read() {
+	while (!(SPI1->SR & SPI_SR_RXNE)) ; //wait not empty
+	uint16_t data = SPI1->DR;
+	return data;
+}
+
 void SPI_write(uint8_t bits)
 {
 	while (!(SPI1->SR & SPI_SR_TXE));
@@ -88,24 +95,20 @@ void SPI_write(uint8_t bits)
 
 void cmd(uint8_t bits)
 {
-	CS_LOW()
+	//CS_LOW()
 	RS_CMD()
-	
 	SPI_write(bits);
 	while (SPI1->SR & SPI_SR_BSY);
-
-	CS_HIGH()
+	//CS_HIGH()
 }
 
 void data(uint8_t bits)
 {
-    while (SPI1->SR & SPI_SR_BSY);
-    CS_HIGH()
-	CS_LOW()
+    //while (SPI1->SR & SPI_SR_BSY);
+    //CS_HIGH()
+	//CS_LOW()
 	RS_DATA()
-
 	SPI_write(bits);
 	while (SPI1->SR & SPI_SR_BSY);
-
-	CS_HIGH()
+	//CS_HIGH()
 }

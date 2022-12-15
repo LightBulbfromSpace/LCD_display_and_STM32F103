@@ -10,3 +10,4 @@ build/
 CMakeCache.txt
 [M,m]akefile
 cmake_install.cmake
+.vscode

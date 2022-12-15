@@ -5,13 +5,14 @@
 
 void display_config()
 {
+	/*
     CS_LOW()
 	RESET_ON()
 	delay_us(10000);
 	RESET_OFF()
 	delay_us(1000);
 	
-	cmd(0xA2);		// LCD drive voltage bias ratio: 1/9 bias
+	cmd(0xA3);		// LCD drive voltage bias ratio: 1/7 bias
 	cmd(0xA1);		// RAM address and SEG output correspondence (ADC selection)
 	cmd(0xC0);		// Common output mode selection (normal)
 	
@@ -20,13 +21,33 @@ void display_config()
 	//cmd(0x07);		// Electronic register set (elect. volume value = 0x07 - middle)
 
 	cmd(0x2F);		// Power control set (ratio = 0.5)
-	cmd(0x25);		// Voltage regulator internal resistor ratio set (brightness control)
+	cmd(0x24);		// Voltage regulator internal resistor ratio set (brightness control)
 	
 	cmd(0xA6);		// LCD display normal color
-	cmd(0x40);		// Set start line
-	
-	
+	//cmd(0x40);		// Set start line
 	cmd(0xAF);		// Display ON
+	CS_HIGH()
+	*/
+	CS_LOW();
+	RESET_ON();
+	delay_us(10000); //10ms
+	RESET_OFF();
+	delay_us(1000);
+	/* LCD bias setting (11) */
+	cmd(0b10100011); //1/7 bias
+	/* ADC selection */
+	cmd(0b10100000);
+	/* Common output mode selection */
+	cmd(0b11000000);
+	/* Power control mode */
+	cmd(0x28 | 0b111);  //0b111
+	/* Vo regulator resistor ratio (check) */
+	uint8_t resRatio = 0x04;
+	cmd(0b00100000 | resRatio);
+  	cmd(0xA6); // Normal color, A7 = inverse color
+  	cmd(0xAF); // Display on
+	cmd(0x40);
+	CS_HIGH()
 }
 
 void set_page(uint8_t page_addr)
@@ -47,6 +68,7 @@ void set_start_line(uint8_t line)
 
 void display_clear()
 {
+	CS_LOW();
     for (uint8_t i = 0; i < 8; i++)
     {
 		set_page(i);
@@ -56,6 +78,7 @@ void display_clear()
 			data(0x00);
         }
     }
+	CS_HIGH();
 }
 
 void display_NOP()
@@ -73,12 +96,12 @@ void display_buff_init(uint8_t buff[], uint16_t size)
 // x in range [1:64], y in range [1:128]
 void draw_pixel(uint8_t x, uint8_t y)
 {
+	CS_LOW();
 	y--;
-	
 	set_page((y >> 3) & 0x07);
 	set_column(x & 0x7F);
-
 	data(1 << (y & 0x07));
+	CS_HIGH()
 }
 
 
