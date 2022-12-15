@@ -28,7 +28,7 @@ int __attribute((noreturn)) main(void) {
 	base_point base2 = {10, 10, 1, 1};
 	create_racket(&racket, base2, 10, 5);
 	create_ball(&ball, base);
-	draw_racket(racket);
+	draw_racket(&racket);
 	while (1) {
 		move_ball(&ball);
 	}
