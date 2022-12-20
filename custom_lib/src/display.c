@@ -101,7 +101,7 @@ void draw_pixel(uint8_t x, uint8_t y)
 	set_page((y >> 3) & 0x07);
 	set_column(x & 0x7F);
 	data(1 << (y & 0x07));
-	CS_HIGH()
+	CS_HIGH();
 }
 
 

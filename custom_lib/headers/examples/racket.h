@@ -10,3 +10,4 @@ typedef struct
 
 void draw_racket(Racket_T* racket);
 void create_racket(Racket_T* racket, base_point bp, int lenght, int hight);
+uint8_t set_n_LSB(uint8_t n);

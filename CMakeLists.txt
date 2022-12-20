@@ -60,6 +60,8 @@ set(SOURCE_FILES
     custom_lib/src/examples/running_line.c
     custom_lib/src/examples/racket.c
     custom_lib/src/examples/common.c
+    custom_lib/src/examples/field.c
+    custom_lib/src/buffer.c
     main.c)
 
 
